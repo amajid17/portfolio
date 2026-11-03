@@ -285,7 +285,7 @@ export function SeniorDesign() {
         <SectionHeading
           num="04 · SENIOR DESIGN 2026–27"
           title="SenseGuard — cooperative Wi-Fi sensing with AI-based fault diagnosis and recovery."
-          blurb="One transmitter, four receivers, a Raspberry Pi 5. Separate Tx–Rx paths form a multistatic arrangement whose observations are fused by a common processor. The system tries to detect, diagnose, and recover from measurement faults — with an LLM explaining what happened. Still being built. Nothing here is a claimed result."
+          blurb="One transmitter, four receivers, a Raspberry Pi 5. The idea is that each receiver sees the same transmission from a different angle, and combining those views should make faults easier to catch. The system tries to detect, diagnose, and recover from measurement faults automatically — and explain what it did. Still being built. No results claimed yet."
           right={
             <span className="font-mono2 text-[10px] tracking-[0.12em] uppercase bg-[rgba(62,255,123,0.12)] text-[#3eff7b] border border-[rgba(62,255,123,0.3)] font-semibold rounded-full px-3.5 py-1.5">
               Active · Stage 1–2
@@ -307,11 +307,9 @@ export function SeniorDesign() {
                 Information; one also applies a GPIO-selected synthetic measurement impairment
                 under controlled conditions. All four streams go over USB serial to a{" "}
                 <span className="text-white font-medium">Raspberry Pi 5</span> that fuses the
-                observations. Two parallel tracks run: a{" "}
-                <span className="text-white font-medium">health monitor</span> watching for offline
-                nodes and hardware faults, and a{" "}
-                <span className="text-white font-medium">signal pipeline</span> doing preprocessing,
-                1D CNN fault classification, correction, and fresh-data verification. A{" "}
+                observations. On the Pi, two things run in parallel: a{" "}
+                <span className="text-white font-medium">health monitor</span> that watches for offline nodes and hardware problems, and a{" "}
+                <span className="text-white font-medium">signal pipeline</span> that does the preprocessing, fault classification, correction, and verification against fresh data. A{" "}
                 <span className="text-white font-medium">React + FastAPI dashboard</span> shows
                 sensing results, fault diagnosis, corrective action, and LLM explanation.
               </p>
@@ -363,11 +361,11 @@ export function SeniorDesign() {
               <div className="space-y-3">
                 {[
                   [BarChart2, "React + FastAPI dashboard",
-                    "Live node health, CSI visualizations, fault notifications, diagnosis confidence, correction history, before/after performance, and experiment replay."],
+                    "Shows live node status, CSI activity, fault notifications, and the full correction history. Includes a replay mode for reviewing past experiments."],
                   [Terminal, "Python backend",
-                    "FastAPI services for CSI ingestion, experiment management, and model inference. Coordinates between the health monitor and the signal pipeline."],
+                    "Handles CSI ingestion from the receivers, manages experiment state, and routes inference requests. Bridges the health monitor and the signal pipeline."],
                   [Layers, "Signal processing",
-                    "CSI parsing by sender ID, sequence-number validation, window alignment, feature extraction, movement detection, and impairment simulation."],
+                    "Parses each receiver's CSI stream, validates sequence numbers, aligns windows, and extracts features. Also handles the impairment simulation for training data."],
                   [Cpu, "ML pipeline",
                     "Dataset preparation with session-level train/test splits, PyTorch 1D CNN training, optional GRU comparison, and held-out evaluation — in progress."],
                   [GitBranch, "Edge deployment",
@@ -403,12 +401,7 @@ export function SeniorDesign() {
                     Three methods. Same data. Moving-target demonstration.
                   </p>
                   <p className="text-[13.5px] text-[#a8bab0] leading-relaxed mb-3">
-                    Fixed preprocessing, rule-based diagnosis, and AI-assisted selection are
-                    compared on the same recordings, injected conditions, and test partitions.
-                    A moving-target demonstration will make fault and recovery effects visible
-                    before, during, and after each intervention. The dashboard distinguishes
-                    measured values, model-based calculations, and unavailable results.
-                    No result is claimed until it appears on the independent test set.
+                    Three approaches — fixed preprocessing, rule-based diagnosis, and the AI-assisted version — are run on the same data under the same injected fault conditions. A moving target makes the before/after visible. The dashboard separates what was measured, what was calculated from a model, and what wasn’t available. Nothing gets reported as a result until it shows up on the held-out test set.
                   </p>
                   <div className="flex flex-wrap gap-1.5">
                     {[
