@@ -14,6 +14,7 @@ export const PROFILE = {
   grad: "Expected June 2027",
 };
 
+
 export type Lab = {
   id: string;
   ch: string;
@@ -113,7 +114,7 @@ export const LABS: Lab[] = [
     area: "Digital Signal Processing",
     title: "3-Band FIR Audio Equalizer",
     summary:
-      "Linear-phase FIR crossover in MATLAB applied to real captures. FFT-based before/after evaluation of magnitude response and reconstruction.",
+      "Three-band FIR equalizer in MATLAB, run on actual recorded audio. Compared the magnitude response before and after filtering using FFT to check the crossover worked.",
     tags: ["MATLAB", "FIR", "FFT"],
     specs: [
       { k: "Bands", v: "3 · linear-phase" },
@@ -210,12 +211,12 @@ export const PERSONAL: PersonalProject[] = [
   {
     type: "Mobile · Offline-first",
     name: "Quran Reader",
-    plats: ["iOS", "React Native"],
+    plats: ["Android", "React Native"],
     pitch:
       "A Quran reader I built because the ones I tried were either too cluttered or required an internet connection. RTL layout, Tajweed coloring per rule, all 114 surahs on-device. Open it on a plane, no account needed.",
     links: [
       { l: "GitHub", h: "https://github.com/amajid17/Quran-reader" },
-      { l: "Live · iOS", h: "https://expo.dev/accounts/amajid_17/projects/quran-reader/builds/04f64636-2f88-435e-a010-edb470139175" },
+      { l: "Android APK", h: "https://expo.dev/accounts/amajid_17/projects/quran-reader/builds/04f64636-2f88-435e-a010-edb470139175" },
     ],
     stack: ["React Native 0.81", "Expo SDK 54", "TypeScript", "React Nav v7", "quran-json"],
     highlights: [
@@ -235,7 +236,7 @@ export const PERSONAL: PersonalProject[] = [
         { src: "images/quran-home-dark.png",     alt: "Surah list, dark mode" },
         { src: "images/quran-reading.png",        alt: "Reading view with Tajweed coloring" },
         { src: "images/quran-settings.png",       alt: "Settings, Tajweed rule toggles" },
-        { src: "images/quran-bookmarks.png",       alt: "Bookmarks — saved ayah with timestamp" },
+        { src: "images/quran-bookmarks.png",       alt: "Bookmarks, saved ayah with timestamp" },
       ],
     },
   },
@@ -263,11 +264,33 @@ export const PERSONAL: PersonalProject[] = [
     accent: "#7df9ff",
   },
   {
+    type: "Android · Production use",
+    name: "PunchLedger",
+    plats: ["Android", "Expo", "SQLite"],
+    pitch:
+      "Built for my workplace because the cloud time clock we had stopped working whenever the Wi-Fi did. Employees tap a PIN and clock in. Everything lives in SQLite on the device. A punch is either committed to the database or it didn't happen. No pending queue, no sync dependency, no expiring license.",
+    links: [
+      { l: "Live Demo", h: "PunchLedger_Live_Demo.html" },
+    ],
+    stack: ["JavaScript", "Expo", "React Native", "expo-sqlite (WAL)", "expo-crypto", "EAS Build"],
+    highlights: [
+      "Invalid punches are impossible by construction — a state machine enforces Clock In / Clock Out order, and the database transaction has the final say",
+      "Payroll math is pure and heavily tested: 2,350 property-based assertions cover boundary-crossing shifts, DST spring-forward/fall-back, and open-shift exclusion",
+    ],
+    arch: [
+      "Every launch runs PRAGMA integrity_check and PRAGMA foreign_key_check before the PIN screen — a corrupt database stops the app and says so rather than silently writing more bad data",
+      "PIN threat model is documented honestly: salted SHA-256 with throttling and lockouts, and THREAT_MODEL.md says plainly that a 4-digit PIN is brute-forceable given the database file",
+    ],
+    metric: "2350",
+    metricLabel: "test assertions across payroll, state machine and DB",
+    accent: "#f59e0b",
+  },
+  {
     type: "PWA · Installable",
     name: "Money Tracker",
     plats: ["PWA", "Multi-wallet", "Zero-dep"],
     pitch:
-      "Tracks spending across multiple wallets with category breakdowns, recurring entries, and a canvas-drawn donut chart. No backend, no build step. Installs straight to the home screen.",
+      "I wanted one finance app that worked offline and didn't require a login. Multiple wallets, categories, recurring entries, and a donut chart drawn on a canvas element. No backend, no build step — installs to the home screen.",
     links: [
       { l: "GitHub", h: "https://github.com/amajid17/money-tracker.git" },
       { l: "Live Demo", h: "https://money-tracker19.netlify.app/" },
