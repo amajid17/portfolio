@@ -1,0 +1,527 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>PunchLedger Live Demo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: kiosk phone on the left, guided tour + "under the hood" log on the right. Palette follows the real app: ink, signal blue, ledger green, amber warnings. */
+:root{
+  --bg:#eceff3; --panel:#ffffff; --ink:#181d26; --ink2:#566070; --rule:#dde1e7; --rule2:#c3c9d2;
+  --blue:#2150d8; --on-blue:#ffffff; --blue-s:#e6edfd;
+  --green:#087443; --green-s:#e5f4ec; --red:#bb3d42; --red-s:#fce8e8; --amber:#8a6100; --amber-s:#fff6d9;
+  --bezel:#181d26; --log-bg:#10141b; --log-fg:#c9d1de; --log-dim:#6f7a8d;
+  --mono:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace; --sans:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1117; --panel:#171c25; --ink:#eef1f6; --ink2:#9aa6b8; --rule:#283040; --rule2:#394357;
+  --blue:#7ea0ff; --on-blue:#0b1020; --blue-s:#1b2a55;
+  --green:#4cc38a; --green-s:#12301f; --red:#ff8b8f; --red-s:#3a1a1c; --amber:#e8b64a; --amber-s:#33290f;
+  --bezel:#03050a; --log-bg:#090c11; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1117; --panel:#171c25; --ink:#eef1f6; --ink2:#9aa6b8; --rule:#283040; --rule2:#394357;
+  --blue:#7ea0ff; --on-blue:#0b1020; --blue-s:#1b2a55;
+  --green:#4cc38a; --green-s:#12301f; --red:#ff8b8f; --red-s:#3a1a1c; --amber:#e8b64a; --amber-s:#33290f;
+  --bezel:#03050a; --log-bg:#090c11; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 48px}
+.wrap{max-width:1080px;margin:0 auto}
+header.top{display:flex;flex-direction:column;gap:6px;margin-bottom:24px;max-width:62ch}
+.eyebrow{font:500 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--blue)}
+h1{font-size:clamp(26px,4.4vw,38px);line-height:1.1;margin:0;letter-spacing:-.02em;text-wrap:balance}
+.lede{color:var(--ink2);margin:4px 0 0}
+.grid{display:grid;grid-template-columns:minmax(0,380px) minmax(0,1fr);gap:32px;align-items:start}
+@media(max-width:860px){.grid{grid-template-columns:minmax(0,1fr)}.phonecol{justify-self:center;width:100%;max-width:380px}}
+/* phone */
+.phone{background:var(--bezel);border-radius:34px;padding:12px;box-shadow:0 18px 40px rgba(10,14,22,.22)}
+.screen{background:var(--panel);border-radius:24px;height:700px;overflow-y:auto;overflow-x:hidden;position:relative;color:var(--ink)}
+.screen:focus{outline:none}
+.statusbar{display:flex;justify-content:space-between;font:500 11px var(--mono);color:var(--ink2);padding:10px 18px 0}
+.pad-in{padding:14px 20px 24px}
+.brand{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.mark{width:34px;height:34px;border-radius:8px;background:var(--ink);color:var(--panel);display:grid;place-items:center;font:600 13px var(--mono)}
+.brand b{font-size:15px}
+h2{font-size:26px;letter-spacing:-.02em;margin:0 0 14px}
+.dots{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+.dot{width:46px;height:54px;border:1px solid var(--rule2);border-radius:6px;display:grid;place-items:center;font-size:24px;color:var(--blue)}
+.dot.on{border-color:var(--blue);background:var(--blue-s)}
+.dots.locked .dot{opacity:.45}
+.msg{min-height:22px;text-align:center;color:var(--red);font-size:13px;margin-bottom:10px}
+.lockbox{background:var(--red-s);color:var(--red);border:1px solid var(--red);border-radius:8px;padding:8px 12px;font-size:13px}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.keys.off{opacity:.35;pointer-events:none}
+.key{height:56px;border:1px solid var(--rule2);background:var(--panel);color:var(--ink);border-radius:8px;font:600 22px var(--sans);cursor:pointer}
+.key.sec{background:var(--bg);font-size:13px;color:var(--ink2)}
+.key:active{background:var(--blue-s)}
+button{font-family:inherit}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+.primary{width:100%;min-height:50px;border:0;border-radius:8px;background:var(--blue);color:var(--on-blue);font:600 16px var(--sans);cursor:pointer;margin-top:12px}
+.primary.out{background:var(--ink);color:var(--panel)}
+.primary[disabled]{opacity:.5;cursor:default}
+.ghost{background:none;border:0;color:var(--ink2);text-decoration:underline;font-size:13px;padding:12px 14px;min-height:44px;cursor:pointer}
+.links{display:flex;justify-content:center;flex-wrap:wrap;margin-top:6px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.hello{font-size:20px;font-weight:700;letter-spacing:-.01em}
+.sub{color:var(--ink2);font-size:13px}
+.card{border:1px solid var(--rule);border-radius:10px;padding:14px;margin-top:12px}
+.status{display:flex;align-items:center;gap:8px;font-weight:600}
+.pill{font:600 11px var(--mono);letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:99px;background:var(--bg);color:var(--ink2);white-space:nowrap}
+.pill.live{background:var(--green-s);color:var(--green)}
+.pill.warn{background:var(--amber-s);color:var(--amber)}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.big{font:600 34px var(--mono);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.nav{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.nav button{width:44px;height:44px;border:1px solid var(--rule2);background:var(--panel);color:var(--ink);border-radius:8px;font-size:18px;cursor:pointer}
+.nav button[disabled]{opacity:.35;cursor:default}
+.nav .rng{text-align:center;font-size:13px;font-weight:600}
+.day{display:grid;grid-template-columns:34px 1fr auto;gap:8px;align-items:center;font-size:13px;padding:3px 0}
+.bar{height:8px;background:var(--bg);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--blue);border-radius:4px}
+.shift{padding:9px 0;border-top:1px solid var(--rule);font-size:13px}
+.shift:first-child{border-top:0}
+.note{font-size:12px;color:var(--amber);background:var(--amber-s);border-radius:6px;padding:6px 8px;margin-top:6px}
+.empty{color:var(--ink2);font-size:13px;padding:6px 0}
+.tmo{font:400 11px var(--mono);color:var(--ink2);text-align:center;margin-top:14px}
+.confirm{text-align:center;padding-top:60px}
+.tick{width:72px;height:72px;border-radius:50%;background:var(--green);color:var(--on-blue);display:grid;place-items:center;font-size:36px;margin:0 auto 18px}
+.tick.out{background:var(--ink);color:var(--panel)}
+.banner{background:var(--amber-s);color:var(--amber);border-radius:8px;padding:10px 12px;font-size:13px;margin-top:12px}
+.tabs{display:flex;gap:6px;margin-top:12px}
+.tab{flex:1;min-height:44px;border:1px solid var(--rule2);background:var(--panel);color:var(--ink);border-radius:8px;font:600 14px var(--sans);cursor:pointer}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--panel);border-color:var(--ink)}
+details{border:1px solid var(--rule);border-radius:10px;margin-top:10px;padding:0 12px}
+summary{display:flex;justify-content:space-between;align-items:center;gap:8px;min-height:52px;cursor:pointer;list-style:none;font-weight:600}
+summary::-webkit-details-marker{display:none}
+details[open] summary{border-bottom:1px solid var(--rule);margin-bottom:8px}
+details .day:last-child{margin-bottom:10px}
+label.f{display:block;font-size:13px;font-weight:600;margin:12px 0 5px}
+input.in{width:100%;min-height:46px;border:1px solid var(--rule2);border-radius:8px;padding:8px 12px;font:500 16px var(--mono);background:var(--panel);color:var(--ink)}
+.codebox{background:var(--ink);color:var(--panel);border-radius:10px;padding:16px;text-align:center;margin-top:14px}
+.codebox small{display:block;font:500 11px var(--mono);letter-spacing:.12em;opacity:.7;margin-bottom:8px}
+.codebox span{font:600 28px var(--mono);letter-spacing:.14em}
+pre.csv{font:400 11px/1.5 var(--mono);background:var(--bg);border-radius:8px;padding:10px;overflow-x:auto;margin:10px 0 0;white-space:pre}
+.ok{color:var(--green);font-size:13px;margin-top:8px}
+/* side column */
+.side{display:flex;flex-direction:column;gap:20px;min-width:0}
+.panel{background:var(--panel);border:1px solid var(--rule);border-radius:12px;padding:18px}
+.panel h3{margin:0 0 10px;font-size:13px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink2);font-weight:500}
+ol.tour{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:8px}
+ol.tour li::marker{font-family:var(--mono);color:var(--blue)}
+.creds{width:100%;border-collapse:collapse;font-size:14px}
+.creds th{font-weight:500;text-align:left;color:var(--ink2);padding:6px 0;border-bottom:1px solid var(--rule)}
+.creds td{padding:7px 0;border-bottom:1px solid var(--rule)}
+.creds td:last-child{font-family:var(--mono);text-align:right}
+.log{background:var(--log-bg);color:var(--log-fg);border-radius:10px;padding:12px;font:400 12px/1.55 var(--mono);height:280px;overflow:auto}
+.log div{white-space:pre-wrap;word-break:break-word}
+.log .t{color:var(--log-dim)}
+.log .sql{color:#8fb4ff}.log .okk{color:#6fd3a0}.log .bad{color:#ff9a9d}.log .warn{color:#f0c36a}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.btn{min-height:44px;padding:0 14px;border:1px solid var(--rule2);background:var(--panel);color:var(--ink);border-radius:8px;font:600 13px var(--sans);cursor:pointer}
+.fine{font-size:13px;color:var(--ink2);max-width:70ch}
+@media(prefers-reduced-motion:no-preference){.screen>div{animation:in .18s ease-out}@keyframes in{from{opacity:.0;transform:translateY(4px)}to{opacity:1;transform:none}}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div class="eyebrow">Live demo · simulation</div>
+    <h1>PunchLedger, the kiosk in your browser</h1>
+    <p class="lede">An offline-first Android time clock for small businesses. This page replays the real flows: PIN kiosk, punches, weekly math, manager area, and recovery. Everything runs in this tab and nothing is saved. The Android app keeps its records in SQLite on the device.</p>
+  </header>
+
+  <div class="grid">
+    <div class="phonecol">
+      <div class="phone"><div class="screen" id="screen" tabindex="-1" aria-label="PunchLedger kiosk simulation"></div></div>
+    </div>
+
+    <div class="side">
+      <section class="panel">
+        <h3>Take the tour</h3>
+        <ol class="tour">
+          <li>Enter <b class="mono">1111</b> to sign in as Ava, then clock in. The confirmation returns to the PIN screen after 5 seconds.</li>
+          <li>Sign in as Marcus (<b class="mono">2222</b>). He is already clocked in, and the earlier weeks hold an overnight shift that splits across the Monday week boundary.</li>
+          <li>Press <b>Simulate double-tap</b> below right after a punch and watch the transaction get rejected in the log.</li>
+          <li>Enter a wrong PIN five times to see the 30 second lockout.</li>
+          <li>Switch to manager sign-in with <b class="mono">2468</b>, then try Team and Export.</li>
+          <li>Choose <b>Forgot manager PIN?</b> and use the recovery code from the table.</li>
+        </ol>
+      </section>
+
+      <section class="panel">
+        <h3>Demo credentials (fictional)</h3>
+        <table class="creds" id="creds"></table>
+      </section>
+
+      <section class="panel">
+        <h3>Under the hood</h3>
+        <div class="log" id="log" role="log" aria-live="off" aria-label="Simulated database and security log"></div>
+        <div class="btns">
+          <button class="btn" id="dup">Simulate double-tap</button>
+          <button class="btn" id="reset">Reset demo</button>
+        </div>
+        <p class="fine" style="margin-top:12px">The log narrates what the native app does for each action: salted hash checks, the punch state machine, and the SQLite transaction. It is illustrative output from this simulation, not a real database.</p>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+'use strict';
+var H=36e5, MIN=6e4;
+var $=function(s){return document.querySelector(s)};
+var screenEl=$('#screen'), logEl=$('#log');
+var S;
+
+/* ---------- time + payroll helpers (same rules as payroll.js: Monday weeks, actual elapsed time) ---------- */
+function weekStart(ts,off){var d=new Date(ts);var dow=d.getDay();var back=dow===0?6:dow-1;d.setDate(d.getDate()-back-(off||0)*7);d.setHours(0,0,0,0);return d.getTime()}
+function addDays(ts,n){var d=new Date(ts);d.setDate(d.getDate()+n);return d.getTime()}
+function overlap(sh,a,b){if(sh.out==null)return 0;return Math.max(0,Math.min(sh.out,b)-Math.max(sh.in,a))}
+function dur(ms){var m=Math.round(ms/MIN);return Math.floor(m/60)+'h '+String(m%60).padStart(2,'0')+'m'}
+function fmtT(ts){return new Date(ts).toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})}
+function fmtD(ts){return new Date(ts).toLocaleDateString([],{weekday:'short',month:'short',day:'numeric'})}
+function fmtR(ws){return new Date(ws).toLocaleDateString([],{month:'short',day:'numeric'})+' – '+new Date(addDays(ws,6)).toLocaleDateString([],{month:'short',day:'numeric'})}
+function pad(n){return String(n).padStart(2,'0')}
+function localStamp(ts){var d=new Date(ts);return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+' '+pad(d.getHours())+':'+pad(d.getMinutes())+':'+pad(d.getSeconds())}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+
+function summarize(emp,off,now){
+  var ws=weekStart(now,off), we=addDays(ws,7), days=[], i;
+  for(i=0;i<7;i++)days.push({start:addDays(ws,i),ms:0});
+  var list=[], total=0;
+  emp.shifts.forEach(function(sh){
+    var end=sh.out==null?now:sh.out;
+    if(sh.in>=we||end<=ws)return;
+    var part=overlap(sh,ws,we);
+    var idx=0; for(i=6;i>=0;i--){if(sh.in>=days[i].start){idx=i;break}}
+    if(sh.in<ws)idx=0;
+    if(sh.out!=null){days[idx].ms+=part;total+=part}
+    list.push({sh:sh,part:part,crossIn:sh.in<ws,crossOut:sh.out!=null&&sh.out>we});
+  });
+  list.sort(function(a,b){return b.sh.in-a.sh.in});
+  return {ws:ws,days:days,total:total,list:list};
+}
+function openShift(emp){for(var i=0;i<emp.shifts.length;i++)if(emp.shifts[i].out==null)return emp.shifts[i];return null}
+
+/* ---------- seeded demo data ---------- */
+function rng(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;var t=Math.imul(seed^seed>>>15,1|seed);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hex(r,n){var s='';for(var i=0;i<n;i++)s+='0123456789abcdef'[Math.floor(r()*16)];return s}
+function seedShifts(name,seed,opts,now){
+  var r=rng(seed), out=[], todayStart=weekStart(now,0), dayZero=new Date(now);dayZero.setHours(0,0,0,0);dayZero=dayZero.getTime();
+  for(var w=8;w>=0;w--){
+    var ws=weekStart(now,w);
+    for(var d=0;d<(opts.sat?6:5);d++){
+      if(r()<0.14)continue;
+      var base=addDays(ws,d);
+      if(opts.skipToday&&base===dayZero)continue;
+      var st=base+8*H+Math.round((r()-0.35)*40)*MIN;
+      var en=st+Math.round((7.6+r()*1.3)*60)*MIN;
+      if(en>now-5*MIN)continue;
+      out.push({in:st,out:en,inId:'p_'+hex(r,8),outId:'p_'+hex(r,8)});
+    }
+  }
+  return out;
+}
+function boot(){
+  var now=Date.now();
+  var salts=function(){return hex(Math.random,12)};
+  S={screen:'pin',mode:'emp',pin:'',err:'',user:null,off:0,busy:false,deadline:0,confirm:null,lastPunch:null,
+     tab:'team',mOff:0,exportAt:null,csv:'',fails:{emp:0,mgr:0},lock:{emp:0,mgr:0},logLines:[],
+     recCode:'K7MN2PQR',mgrPin:'2468',emps:[]};
+  var specs=[
+    {id:'emp_ava',name:'Ava Okafor',pin:'1111',seed:11,opts:{}},
+    {id:'emp_marcus',name:'Marcus Lindqvist',pin:'2222',seed:22,opts:{skipToday:true}},
+    {id:'emp_priya',name:'Priya Raman',pin:'3333',seed:33,opts:{}}
+  ];
+  specs.forEach(function(sp){
+    var e={id:sp.id,name:sp.name,salt:salts(),pin:sp.pin,shifts:seedShifts(sp.name,sp.seed,sp.opts,now)};
+    S.emps.push(e);
+  });
+  var marcus=S.emps[1], ws0=weekStart(now,0);
+  /* overnight shift crossing the Monday boundary: 10 pm Sunday to 6 am Monday */
+  if(ws0+6*H<now-5*MIN) marcus.shifts.push({in:ws0-2*H,out:ws0+6*H,inId:'p_ovn0001',outId:'p_ovn0002'});
+  marcus.shifts.push({in:now-135*MIN,out:null,inId:'p_live0001',outId:null});
+  S.emps.forEach(function(e){e.shifts.sort(function(a,b){return a.in-b.in})});
+  S.mgrSalt=salts(); S.recSalt=salts();
+  S.ready=Promise.all(S.emps.map(function(e){return sha(e.salt+':'+e.pin).then(function(h){e.hash=h})})
+    .concat([sha(S.mgrSalt+':'+S.mgrPin).then(function(h){S.mgrHash=h}),sha(S.recSalt+':'+S.recCode).then(function(h){S.recHash=h})]));
+  logEl.innerHTML='';
+  log('boot','Database opened (WAL). PRAGMA integrity_check → ok. foreign_key_check → ok.','okk');
+  log('boot','Seeded fictional demo roster. PINs stored as salted SHA-256 only.','');
+  render();
+}
+function sha(s){
+  try{
+    if(window.crypto&&crypto.subtle){
+      return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(b){return Array.prototype.map.call(new Uint8Array(b),function(x){return x.toString(16).padStart(2,'0')}).join('')});
+    }
+  }catch(e){}
+  return Promise.resolve('plain:'+s);
+}
+
+/* ---------- log ---------- */
+function log(tag,text,cls){
+  var d=document.createElement('div');
+  var t=new Date().toLocaleTimeString([],{hour12:false});
+  d.innerHTML='<span class="t">'+t+'</span> <span class="'+(cls||'')+'">'+esc(text)+'</span>';
+  logEl.insertBefore(d,logEl.firstChild);
+  while(logEl.children.length>60)logEl.removeChild(logEl.lastChild);
+}
+
+/* ---------- rendering ---------- */
+function clockbar(){return '<div class="statusbar"><span>PunchLedger</span><span>offline · airplane mode</span></div>'}
+function render(){
+  var h='';
+  if(S.screen==='pin')h=viewPin();
+  else if(S.screen==='dash')h=viewDash();
+  else if(S.screen==='confirm')h=viewConfirm();
+  else if(S.screen==='mgr')h=viewMgr();
+  else if(S.screen==='recover')h=viewRecover();
+  screenEl.innerHTML='<div>'+clockbar()+h+'</div>';
+  renderCreds();
+}
+function locked(k){return Date.now()<S.lock[k]}
+function viewPin(){
+  var mgr=S.mode==='mgr', k=mgr?'mgr':'emp', lk=locked(k), n=mgr?Math.max(S.pin.length+1,4):4, dots='';
+  for(var i=0;i<n;i++)dots+='<div class="dot'+(!lk&&S.pin.length>i?' on':'')+'">'+(!lk&&S.pin.length>i?'•':'')+'</div>';
+  var keys='';
+  '123456789'.split('').forEach(function(d){keys+='<button class="key" data-act="key" data-v="'+d+'" aria-label="'+d+'">'+d+'</button>'});
+  keys+='<button class="key sec" data-act="clr" aria-label="Clear all digits">Clear</button><button class="key" data-act="key" data-v="0" aria-label="0">0</button><button class="key sec" data-act="bk" aria-label="Delete last digit">⌫</button>';
+  var msg=lk?'<div class="lockbox">Too many failed attempts.<br>Try again in <b id="lockn">'+Math.ceil((S.lock[k]-Date.now())/1000)+'</b>s.</div>':esc(S.err);
+  return '<div class="pad-in"><div class="brand"><span class="mark">PL</span><b>PunchLedger</b></div>'+
+    '<h2>'+(mgr?'Manager PIN':'Enter PIN')+'</h2><div class="dots'+(lk?' locked':'')+'" aria-label="PIN entry">'+dots+'</div>'+
+    '<div class="msg" role="status" aria-live="polite">'+msg+'</div><div class="keys'+(lk?' off':'')+'">'+keys+'</div>'+
+    (mgr?'<button class="primary" data-act="submitMgr"'+(!S.pin||lk?' disabled':'')+'>Sign in</button>':'')+
+    '<div class="links"><button class="ghost" data-act="mode">'+(mgr?'← Employee sign-in':'Manager sign-in →')+'</button>'+(mgr?'<button class="ghost" data-act="forgot">Forgot manager PIN?</button>':'')+'</div></div>';
+}
+function greet(){var h=new Date().getHours();return h<12?'morning':h<17?'afternoon':'evening'}
+function dayRows(sm){
+  var max=Math.max.apply(null,sm.days.map(function(d){return d.ms}).concat([8*H])), out='';
+  sm.days.forEach(function(d){
+    out+='<div class="day"><span>'+new Date(d.start).toLocaleDateString([],{weekday:'short'})+'</span><div class="bar"><i style="width:'+(d.ms/max*100).toFixed(1)+'%"></i></div><span class="mono">'+(d.ms?dur(d.ms):'—')+'</span></div>';
+  });
+  return out;
+}
+function viewDash(){
+  var u=S.user, now=Date.now(), sm=summarize(u,S.off,now), open=openShift(u);
+  var status=open?'<span class="pill live">In progress</span> since '+fmtT(open.in)+'<div class="sub" style="margin-top:4px">Provisional <b class="mono" id="live">'+dur(now-open.in)+'</b> so far. Not counted in totals until you clock out.</div>':'<span class="pill">Clocked out</span>';
+  var shifts='';
+  sm.list.forEach(function(x){
+    var sh=x.sh, note='';
+    if(x.crossIn)note='<div class="note">Started the previous week. Only '+dur(x.part)+' counts in this week.</div>';
+    if(x.crossOut)note='<div class="note">Continues into next week. Only '+dur(x.part)+' counts in this week.</div>';
+    shifts+='<div class="shift"><div class="row"><b>'+fmtD(sh.in)+'</b>'+(sh.out==null?'<span class="pill live">In progress</span>':'<span class="mono">'+dur(sh.out-sh.in)+'</span>')+'</div><div class="sub mono">'+fmtT(sh.in)+' → '+(sh.out==null?'now':fmtT(sh.out))+'</div>'+note+'</div>';
+  });
+  if(!shifts)shifts='<div class="empty">No punches recorded for this week.'+(S.off>8?' Records older than this demo\'s data would still be kept on the device.':'')+'</div>';
+  var label=S.off===0?'This week':S.off===1?'Last week':S.off+' weeks ago';
+  return '<div class="pad-in"><div class="row"><div><div class="sub">Good '+greet()+'</div><div class="hello">'+esc(u.name)+'</div></div><button class="ghost" data-act="signout">Done</button></div>'+
+    '<div class="card"><div class="status">'+status+'</div><button class="primary'+(open?' out':'')+'" data-act="punch"'+(S.busy?' disabled':'')+'>'+(open?'Clock Out':'Clock In')+'</button></div>'+
+    '<div class="card"><div class="nav"><button data-act="prev" aria-label="Previous week"'+(S.off>=12?' disabled':'')+'>‹</button><div class="rng">'+label+'<div class="sub" style="font-weight:400">'+fmtR(sm.ws)+'</div></div><button data-act="next" aria-label="Next week"'+(S.off<=0?' disabled':'')+'>›</button></div>'+
+    '<div style="text-align:center;margin:12px 0 4px"><div class="big">'+dur(sm.total)+'</div><div class="sub">completed hours</div></div>'+dayRows(sm)+'</div>'+
+    '<div class="card"><div class="sub" style="font-weight:600;margin-bottom:4px">SHIFTS</div>'+shifts+'</div>'+
+    '<div class="tmo">Signs out after inactivity in <span id="tmo">60</span>s</div></div>';
+}
+function viewConfirm(){
+  var c=S.confirm;
+  return '<div class="pad-in confirm"><div class="tick'+(c.action==='clock_out'?' out':'')+'">✓</div><h2 style="margin-bottom:6px">'+(c.action==='clock_in'?'Clocked In':'Clocked Out')+'</h2>'+
+    '<div class="hello">'+esc(c.name)+'</div><div class="big" style="margin-top:12px">'+fmtT(c.at)+'</div><div class="sub">'+fmtD(c.at)+'</div>'+
+    '<div class="tmo" style="margin-top:36px">Returning to the PIN screen in <span id="cd">5</span>s</div></div>';
+}
+function viewMgr(){
+  var now=Date.now(), ws=weekStart(now,S.mOff);
+  var banner=S.exportAt?'':'<div class="banner">No export recorded in the last 7 days. Export a CSV to keep a copy of the records outside this device.</div>';
+  var body='';
+  if(S.tab==='team'){
+    var nav='<div class="nav" style="margin-top:12px"><button data-act="mprev" aria-label="Previous week"'+(S.mOff>=12?' disabled':'')+'>‹</button><div class="rng">'+(S.mOff===0?'This week':S.mOff+' week'+(S.mOff>1?'s':'')+' ago')+'<div class="sub" style="font-weight:400">'+fmtR(ws)+'</div></div><button data-act="mnext" aria-label="Next week"'+(S.mOff<=0?' disabled':'')+'>›</button></div>';
+    var list='';
+    S.emps.forEach(function(e){
+      var sm=summarize(e,S.mOff,now), open=openShift(e);
+      list+='<details><summary><span>'+esc(e.name)+(open?' <span class="pill live">In progress</span>':'')+'</span><span class="mono">'+dur(sm.total)+'</span></summary>'+dayRows(sm)+(open?'<div class="note" style="margin-bottom:10px">Open shift since '+fmtT(open.in)+' is incomplete and excluded from the total.</div>':'')+'</details>';
+    });
+    body=nav+list;
+  }else{
+    body='<div class="card"><b>Export punch history</b><div class="sub" style="margin:4px 0 0">Stable columns, UTC plus local time, RFC 4180 escaping. On Android this opens the share sheet.</div><button class="primary" data-act="export">Create CSV</button>'+
+      (S.csv?'<div class="ok" role="status">File created. On a device the share sheet opens now. A created file is not a verified backup until you save it somewhere safe.</div><pre class="csv" tabindex="0">'+esc(S.csv.split('\n').slice(0,10).join('\n'))+'\n…</pre><button class="btn" style="margin-top:10px;width:100%" data-act="copy">Copy CSV text</button>':'')+'</div>';
+  }
+  return '<div class="pad-in"><div class="row"><div><div class="sub">Manager area</div><div class="hello">PunchLedger</div></div><button class="ghost" data-act="signout">Sign out</button></div>'+banner+
+    '<div class="tabs" role="tablist"><button class="tab" role="tab" data-act="tab" data-v="team" aria-selected="'+(S.tab==='team')+'">Team</button><button class="tab" role="tab" data-act="tab" data-v="export" aria-selected="'+(S.tab==='export')+'">Export</button></div>'+body+
+    '<div class="sub" style="margin-top:12px">Last export: '+(S.exportAt?fmtD(S.exportAt)+' '+fmtT(S.exportAt):'never')+'</div></div>';
+}
+function viewRecover(){
+  var r=S.rec||{};
+  if(r.newCode){
+    return '<div class="pad-in"><div class="confirm" style="padding-top:30px"><div class="tick">✓</div><h2>PIN reset</h2><p class="sub">A new recovery code replaced the old one. Write it down now. It is shown once.</p></div>'+
+      '<div class="codebox"><small>NEW RECOVERY CODE</small><span>'+r.newCode.slice(0,4)+'–'+r.newCode.slice(4)+'</span></div><button class="primary" data-act="recDone">Done, I saved the code</button></div>';
+  }
+  return '<div class="pad-in"><div class="brand"><span class="mark">PL</span><b>PunchLedger</b></div><h2>Reset manager PIN</h2><p class="sub">Enter the 8-character recovery code saved during setup, then choose a new manager PIN.</p>'+
+    '<label class="f" for="rc">Recovery code</label><input class="in" id="rc" maxlength="9" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="XXXXXXXX">'+
+    '<label class="f" for="np">New manager PIN (4–8 digits)</label><input class="in" id="np" inputmode="numeric" maxlength="8" type="password" placeholder="••••">'+
+    '<label class="f" for="cp">Confirm new PIN</label><input class="in" id="cp" inputmode="numeric" maxlength="8" type="password" placeholder="••••">'+
+    '<div class="msg" role="status" aria-live="polite" style="margin-top:10px">'+esc(r.err||'')+'</div>'+
+    '<button class="primary" data-act="recSubmit"'+(S.busy?' disabled':'')+'>Reset PIN</button><button class="ghost" style="width:100%" data-act="recCancel">Cancel</button></div>';
+}
+function renderCreds(){
+  var rows='<tr><th>Who</th><th style="text-align:right">PIN / code</th></tr>';
+  S.emps.forEach(function(e){rows+='<tr><td>'+esc(e.name)+'</td><td>'+e.pin+'</td></tr>'});
+  rows+='<tr><td>Manager</td><td>'+S.mgrPin+'</td></tr><tr><td>Recovery code</td><td>'+S.recCode.slice(0,4)+'–'+S.recCode.slice(4)+'</td></tr>';
+  $('#creds').innerHTML=rows;
+}
+
+/* ---------- actions ---------- */
+function touch(){if(S.screen==='dash')S.deadline=Date.now()+60000}
+function toPin(){S.screen='pin';S.user=null;S.pin='';S.err='';S.off=0;S.confirm=null;S.mode='emp';render()}
+function fail(k){
+  S.fails[k]++;
+  var max=k==='emp'?5:3, ms=k==='emp'?30000:60000;
+  if(S.fails[k]>=max){S.lock[k]=Date.now()+ms;log('auth','Lockout: '+max+' failed attempts → '+(ms/1000)+'s','bad');S.err=''}
+  else{var left=max-S.fails[k];S.err=(k==='mgr'?'Manager PIN':'PIN')+' not recognised. '+left+(left===1?' attempt remaining before temporary lockout.':' attempts remaining.')}
+  S.pin='';
+}
+function submitEmp(p){
+  if(locked('emp')||S.busy)return;
+  S.busy=true;
+  S.ready.then(function(){
+    return Promise.all(S.emps.map(function(e){return sha(e.salt+':'+p)}));
+  }).then(function(hs){
+    var found=null;
+    S.emps.forEach(function(e,i){if(hs[i]===e.hash)found=e});
+    log('auth','sha256(salt‖pin) compared against '+S.emps.length+' stored verifiers → '+(found?'match':'no match'),found?'okk':'bad');
+    S.busy=false;
+    if(found){S.fails.emp=0;S.user=found;S.off=0;S.screen='dash';S.deadline=Date.now()+60000;S.err='';log('session','Employee identified from the database, not from the UI. Session timer 60s.','')}
+    else fail('emp');
+    render();
+  });
+}
+function submitMgr(){
+  if(locked('mgr')||S.busy||!S.pin)return;
+  var p=S.pin; S.busy=true;
+  S.ready.then(function(){return sha(S.mgrSalt+':'+p)}).then(function(h){
+    S.busy=false;
+    var ok=h===S.mgrHash;
+    log('auth','Manager credential check (separate table, separate lockout) → '+(ok?'match':'no match'),ok?'okk':'bad');
+    if(ok){S.fails.mgr=0;S.screen='mgr';S.tab='team';S.mOff=0;S.pin='';S.err=''}
+    else fail('mgr');
+    render();
+  });
+}
+function applyPunch(u,action,real){
+  var open=openShift(u), now=Date.now();
+  log('db','BEGIN IMMEDIATE','sql');
+  log('db','SELECT open shift FOR '+u.id+' → '+(open?'1 row (clocked in)':'none (clocked out)'),'sql');
+  var allowed=(action==='clock_in'&&!open)||(action==='clock_out'&&!!open);
+  if(!allowed){
+    log('state','REJECTED '+action+' while '+(open?'a shift is already open':'no shift is open')+' (PunchTransitionError)','bad');
+    log('db','ROLLBACK · 0 rows written','bad');
+    return null;
+  }
+  log('state',(open?'clock_in → clock_out':'clock_out → clock_in')+' is a legal transition','okk');
+  var id='p_'+hex(Math.random,8);
+  if(action==='clock_in')u.shifts.push({in:now,out:null,inId:id,outId:null});
+  else{open.out=now;open.outId=id}
+  log('db','INSERT punches (id='+id+', type='+action+', at='+new Date(now).toISOString()+')','sql');
+  log('db','COMMIT · durable before the confirmation screen appears','okk');
+  return now;
+}
+function punch(){
+  if(S.busy||!S.user)return;
+  var u=S.user, action=openShift(u)?'clock_out':'clock_in';
+  S.busy=true;
+  var at=applyPunch(u,action,true);
+  S.busy=false;
+  if(at==null){render();return}
+  S.lastPunch={uid:u.id,action:action};
+  S.confirm={name:u.name,action:action,at:at};
+  S.screen='confirm';S.deadline=Date.now()+5000;render();
+}
+function dup(){
+  if(!S.lastPunch){log('hint','Make a punch first, then press this to replay the same tap.','warn');return}
+  var u=S.emps.filter(function(e){return e.id===S.lastPunch.uid})[0];
+  log('retry','Replaying the last tap ('+S.lastPunch.action+') for '+u.name,'warn');
+  applyPunch(u,S.lastPunch.action,false);
+}
+function csvEscape(v){v=String(v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function buildCsv(){
+  var rows=[];
+  S.emps.forEach(function(e){e.shifts.forEach(function(sh){
+    rows.push({id:sh.inId,emp:e.name,action:'Clock In',at:sh.in});
+    if(sh.out!=null)rows.push({id:sh.outId,emp:e.name,action:'Clock Out',at:sh.out});
+  })});
+  rows.sort(function(a,b){return a.at-b.at});
+  var out=['punch_id,employee,action,timestamp_utc,timestamp_local'];
+  rows.forEach(function(r){out.push([r.id,r.emp,r.action,new Date(r.at).toISOString(),localStamp(r.at)].map(csvEscape).join(','))});
+  return '﻿'.replace('﻿','')+out.join('\n');
+}
+function recSubmit(){
+  if(S.busy)return;
+  var code=($('#rc').value||'').toUpperCase().replace(/[^A-Z0-9]/g,''), np=$('#np').value||'', cp=$('#cp').value||'';
+  S.rec=S.rec||{};
+  if(!/^\d{4,8}$/.test(np)){S.rec.err='New manager PIN must be 4–8 digits.';return render()}
+  if(np!==cp){S.rec.err='PINs do not match.';return render()}
+  S.busy=true;
+  S.ready.then(function(){return sha(S.recSalt+':'+code)}).then(function(h){
+    if(h!==S.recHash){S.busy=false;S.rec.err='Recovery code is incorrect.';log('recovery','Recovery code check → no match','bad');return render()}
+    var chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789', nc='';
+    for(var i=0;i<8;i++)nc+=chars[Math.floor(Math.random()*chars.length)];
+    var ns=hex(Math.random,12), cs=hex(Math.random,12);
+    return Promise.all([sha(ns+':'+np),sha(cs+':'+nc)]).then(function(r){
+      log('recovery','Recovery code verified. One transaction: new manager verifier + new recovery verifier. Old code is now invalid.','okk');
+      S.mgrPin=np;S.mgrSalt=ns;S.mgrHash=r[0];S.recCode=nc;S.recSalt=cs;S.recHash=r[1];
+      S.busy=false;S.rec={newCode:nc};render();
+    });
+  });
+}
+
+/* ---------- events ---------- */
+screenEl.addEventListener('click',function(ev){
+  var b=ev.target.closest('[data-act]'); touch(); if(!b)return;
+  var a=b.getAttribute('data-act'), v=b.getAttribute('data-v');
+  var k=S.mode==='mgr'?'mgr':'emp';
+  if(a==='key'){
+    if(S.busy||locked(k))return;
+    var max=S.mode==='emp'?4:8; if(S.pin.length>=max)return;
+    S.pin+=v;S.err='';render();
+    if(S.mode==='emp'&&S.pin.length===4){var p=S.pin;setTimeout(function(){submitEmp(p)},120)}
+  }else if(a==='clr'){S.pin='';S.err='';render()}
+  else if(a==='bk'){S.pin=S.pin.slice(0,-1);S.err='';render()}
+  else if(a==='mode'){S.mode=S.mode==='emp'?'mgr':'emp';S.pin='';S.err='';render()}
+  else if(a==='submitMgr')submitMgr();
+  else if(a==='forgot'){S.screen='recover';S.rec={};render()}
+  else if(a==='recCancel'||a==='recDone'){S.screen='pin';S.mode='mgr';S.pin='';S.err='';S.rec=null;render()}
+  else if(a==='recSubmit')recSubmit();
+  else if(a==='punch')punch();
+  else if(a==='signout'){log('session','Session cleared. Transient employee state dropped.','');toPin()}
+  else if(a==='prev'){S.off=Math.min(12,S.off+1);render()}
+  else if(a==='next'){S.off=Math.max(0,S.off-1);render()}
+  else if(a==='mprev'){S.mOff=Math.min(12,S.mOff+1);render()}
+  else if(a==='mnext'){S.mOff=Math.max(0,S.mOff-1);render()}
+  else if(a==='tab'){S.tab=v;render()}
+  else if(a==='export'){S.csv=buildCsv();S.exportAt=Date.now();log('export','CSV generated and share sheet requested. Export history updated (file created, backup not verified).','okk');render()}
+  else if(a==='copy'){
+    var done=function(){log('export','CSV copied to clipboard.','')};
+    try{navigator.clipboard.writeText(S.csv).then(done,function(){log('export','Clipboard unavailable here. Select the preview text instead.','warn')})}catch(e){log('export','Clipboard unavailable here. Select the preview text instead.','warn')}
+  }
+});
+$('#dup').addEventListener('click',dup);
+$('#reset').addEventListener('click',boot);
+
+setInterval(function(){
+  var now=Date.now();
+  if(!S)return;
+  if(S.screen==='pin'){
+    var k=S.mode==='mgr'?'mgr':'emp';
+    if(S.lock[k]&&now>=S.lock[k]){S.lock[k]=0;S.fails[k]=0;S.err='';render()}
+    else{var el=$('#lockn');if(el)el.textContent=Math.ceil((S.lock[k]-now)/1000)}
+  }else if(S.screen==='dash'){
+    var rem=S.deadline-now;
+    if(rem<=0){log('session','Inactivity timeout. Back to the PIN screen.','warn');toPin();return}
+    var t=$('#tmo');if(t)t.textContent=Math.ceil(rem/1000);
+    var open=openShift(S.user),lv=$('#live');if(open&&lv)lv.textContent=dur(now-open.in);
+  }else if(S.screen==='confirm'){
+    if(now>=S.deadline){toPin();return}
+    var c=$('#cd');if(c)c.textContent=Math.ceil((S.deadline-now)/1000);
+  }
+},250);
+
+boot();
+})();
+</script>
+
+</body></html>
