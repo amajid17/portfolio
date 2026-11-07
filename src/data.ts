@@ -14,7 +14,6 @@ export const PROFILE = {
   grad: "Expected June 2027",
 };
 
-
 export type Lab = {
   id: string;
   ch: string;
@@ -27,7 +26,7 @@ export type Lab = {
   featured?: boolean;
   category: "Analog" | "Power" | "Digital" | "DSP";
 };
- 
+
 export const LABS: Lab[] = [
   {
     id: "rc",
@@ -65,7 +64,7 @@ export const LABS: Lab[] = [
     area: "Linear Voltage Regulation",
     title: "0–12 V Regulated Bench Supply",
     summary:
-      "Full linear supply from spec. Hand-calculated the Zener bias, sized the op-amp feedback divider for the full 0–12 V range, and added a TIP31 emitter-follower to source the load current the op-amp alone couldn’t.",
+      "Full linear supply from spec. Hand-calculated the Zener bias, sized the op-amp feedback divider for the full 0–12 V range, and added a TIP31 emitter-follower to source the load current the op-amp alone couldn’t.",
     detail:
       "Verified in Multisim at light and heavy load, then measured on the bench across load steps with ripple on the scope and DMM readings. Met every spec with margin.",
     tags: ["LM6132", "TIP31", "Multisim", "Zener Ref", "Feedback"],
@@ -140,7 +139,7 @@ export const LABS: Lab[] = [
     featured: true,
   },
 ];
- 
+
 export const SKILLS = [
   {
     label: "Design & Simulation",
@@ -188,7 +187,7 @@ export const SKILLS = [
     ],
   },
 ];
- 
+
 export type PersonalProject = {
   type: string;
   name: string;
@@ -206,7 +205,7 @@ export type PersonalProject = {
     screenshots: { src: string; alt: string }[];
   };
 };
- 
+
 export const PERSONAL: PersonalProject[] = [
   {
     type: "Mobile · Offline-first",
@@ -309,7 +308,7 @@ export const PERSONAL: PersonalProject[] = [
     accent: "#c4b5fd",
   },
 ];
- 
+
 export const NAV = [
   { id: "about", n: "01 · About" },
   { id: "skills", n: "02 · Skills" },
@@ -317,4 +316,3 @@ export const NAV = [
   { id: "senior-design", n: "04 · Capstone" },
   { id: "contact", n: "05 · Contact" },
 ];
- 
