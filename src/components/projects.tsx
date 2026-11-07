@@ -72,7 +72,7 @@ function CombExplorer() {
           <div className={`rounded-[8px] border px-3 py-2.5 font-mono2 text-[11px] mb-3 ${nyquistNull ? "border-[rgba(62,255,123,0.3)] text-[#3eff7b] bg-[rgba(62,255,123,0.07)]" : "border-[rgba(255,93,93,0.3)] text-[#ff8a8a] bg-[rgba(255,93,93,0.07)]"}`}>
             {nyquistNull ? "✓ NYQUIST NULL PRESENT" : "✕ NYQUIST NULL MISSING"}
           </div>
-          <p className="font-mono2 text-[10px] text-[#7c9086] leading-relaxed">Try N=12 vs N=13 — the exact A/B from the bench sweep to Nyquist.</p>
+          <p className="font-mono2 text-[10px] text-[#7c9086] leading-relaxed">Try N=12 vs N=13 — the exact A/B comparison from the hardware sweep to Nyquist.</p>
         </div>
       </div>
     </div>
@@ -91,7 +91,7 @@ export function EELabs() {
         <SectionHeading
           num="03 · PROJECTS"
           title="Engineering, with receipts."
-          blurb="Seven bench-verified builds. Each card shows what was specified, simulated and measured — hover any card for the full method."
+          blurb="Seven lab projects from circuits coursework. Each card shows the spec, simulation, and measurement result."
           right={
             <div className="flex gap-1.5 bg-white/[0.04] border border-white/10 rounded-full p-1">
               {FILTERS.map((x) => (
@@ -109,7 +109,7 @@ export function EELabs() {
               <div className="flex flex-wrap items-center gap-2.5 mb-4">
                 <span className="inline-flex items-center gap-1.5 font-mono2 text-[10px] tracking-[0.12em] uppercase bg-[#3eff7b] text-black font-semibold rounded-full px-3 py-1"><BadgeCheck size={12} /> Featured · {featured.ch}</span>
                 <span className="font-mono2 text-[10px] tracking-[0.12em] uppercase text-[#3eff7b]">{featured.area}</span>
-                <span className="font-mono2 text-[10px] text-[#7c9086] ml-auto hidden md:block">ISE SCHEMATIC → BENCH SWEEP → MATLAB freqz</span>
+                <span className="font-mono2 text-[10px] text-[#7c9086] ml-auto hidden md:block">ISE SCHEMATIC → HARDWARE SWEEP → MATLAB freqz</span>
               </div>
               <h3 className="font-display font-bold text-[clamp(1.4rem,3vw,2rem)] tracking-[-0.02em] text-white leading-tight mb-3">{featured.title}</h3>
               <p className="text-[14.5px] leading-[1.75] text-[#a8bab0] max-w-[90ch]">{featured.summary}</p>
@@ -174,7 +174,7 @@ export function PersonalProjects() {
       <Reveal className="flex items-center gap-4 mb-8">
         <span className="font-mono2 text-[10px] tracking-[0.18em] uppercase text-[#7c9086]">Personal · Shipped software</span>
         <span className="h-px flex-1 bg-white/[0.07]" />
-        <span className="font-mono2 text-[10px] text-[#7c9086] hidden md:block">LIVE TODAY · INSTALLABLE · OFFLINE</span>
+        <span className="font-mono2 text-[10px] text-[#7c9086] hidden md:block">SHIPPED · LIVE · NO BACKEND</span>
       </Reveal>
 
       <div className="space-y-4">
@@ -194,8 +194,8 @@ export function PersonalProjects() {
                 </div>
                 <p className="text-[14px] leading-[1.7] text-[#a8bab0] mb-5 max-w-[52ch]">{p.pitch}</p>
                 <div className="flex flex-wrap gap-2.5 mb-6">
-                  {p.links.map((l) => (
-                    <a key={l.l} href={l.h} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1.5 font-mono2 text-[11px] tracking-[0.08em] uppercase font-semibold rounded-[8px] px-4 py-2.5 transition-colors ${l.l.includes("Live") || l.l.includes("Expo") ? "bg-white text-black hover:bg-[#3eff7b]" : "border border-[rgba(62,255,123,0.35)] text-[#3eff7b] hover:bg-[rgba(62,255,123,0.1)]"}`}>
+                  {p.links.filter((l) => l.h).map((l) => (
+                    <a key={l.l} href={l.h} target="_blank" rel="noopener noreferrer" className={`inline-flex items-center gap-1.5 font-mono2 text-[11px] tracking-[0.08em] uppercase font-semibold rounded-[8px] px-4 py-2.5 transition-colors ${l.l.includes("Live") || l.l.includes("Expo") || l.l.includes("APK") ? "bg-white text-black hover:bg-[#3eff7b]" : "border border-[rgba(62,255,123,0.35)] text-[#3eff7b] hover:bg-[rgba(62,255,123,0.1)]"}`}>
                       {l.l} <ArrowUpRight size={13} />
                     </a>
                   ))}

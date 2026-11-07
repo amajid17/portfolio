@@ -127,7 +127,7 @@ export function Hero() {
   }, []);
 
   return (
-    <section id="top" className="relative overflow-hidden bg-blueprint pt-[64px]">
+    <section id="top" className="relative overflow-hidden bg-blueprint pt-[64px] isolate">
       {/* soft glows */}
       <div className="absolute -top-40 left-1/2 -translate-x-1/2 w-[900px] h-[500px] rounded-full bg-[radial-gradient(closest-side,rgba(62,255,123,0.14),transparent)] pointer-events-none" />
       <div className="absolute top-40 -right-40 w-[500px] h-[500px] rounded-full bg-[radial-gradient(closest-side,rgba(62,255,123,0.07),transparent)] pointer-events-none" />
@@ -192,11 +192,11 @@ export function Hero() {
         <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7, delay: 0.3 }} className="relative">
           <div className="relative rounded-[16px] overflow-hidden border border-[rgba(62,255,123,0.18)] bg-[#0b1210] card-ring">
             <div className="p-5 md:p-6">
-              <p className="font-mono2 text-[10px] tracking-[0.18em] uppercase text-[#7c9086] mb-1">EE425 · Lab 7 · Comb FIR N=13</p>
-              <p className="font-display font-semibold text-[17px] tracking-tight text-white leading-tight">Hardware matches theory,<br />null-for-null.</p>
+              <p className="font-mono2 text-[10px] tracking-[0.18em] uppercase text-[#7c9086] mb-1">Senior Design · SenseGuard · 2026–27</p>
+              <p className="font-display font-semibold text-[17px] tracking-tight text-white leading-tight">Cooperative Wi-Fi sensing,<br />fault detection and recovery.</p>
               <div className="mt-4 flex gap-2">
-                <span className="font-mono2 text-[10px] px-2 py-1 rounded border border-[rgba(62,255,123,0.3)] text-[#3eff7b] bg-[rgba(62,255,123,0.08)]">13 NULLS MAPPED</span>
-                <span className="font-mono2 text-[10px] px-2 py-1 rounded border border-white/10 text-[#a8bab0]">freqz ✓</span>
+                <span className="font-mono2 text-[10px] px-2 py-1 rounded border border-[rgba(62,255,123,0.3)] text-[#3eff7b] bg-[rgba(62,255,123,0.08)]">1TX · 4RX · CSI</span>
+                <span className="font-mono2 text-[10px] px-2 py-1 rounded border border-white/10 text-[#a8bab0]">802.11bf</span>
               </div>
             </div>
             <div className="border-t border-[rgba(62,255,123,0.12)] bg-[rgba(0,0,0,0.35)] px-4 pt-2 pb-3">
@@ -211,9 +211,9 @@ export function Hero() {
           {/* stats */}
           <div className="mt-4 grid grid-cols-3 gap-px bg-[rgba(62,255,123,0.12)] border border-[rgba(62,255,123,0.12)] rounded-[12px] overflow-hidden">
             {[
-              ["7", "bench-verified builds"],
               ["4", "apps shipped & live"],
-              ["13", "filter nulls proven"],
+              ["1TX · 4RX", "SenseGuard nodes"],
+              ["2350", "test assertions"],
             ].map(([v, l]) => (
               <div key={l} className="bg-[#0b1210] px-4 py-4 text-center">
                 <p className="font-display font-bold text-[22px] text-white leading-none">{v}</p>
@@ -227,10 +227,10 @@ export function Hero() {
       {/* trust bar */}
       <div className="relative border-y border-[rgba(62,255,123,0.12)] bg-[rgba(0,0,0,0.3)]">
         <div className="max-w-[1180px] mx-auto px-5 md:px-8 py-3.5 flex items-center gap-6 overflow-hidden">
-          <span className="font-mono2 text-[10px] tracking-[0.18em] uppercase text-[#7c9086] shrink-0 hidden sm:block">Bench-tested with</span>
+          <span className="font-mono2 text-[10px] tracking-[0.18em] uppercase text-[#7c9086] shrink-0 hidden sm:block">Built with</span>
           <div className="flex-1 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_10%,black_90%,transparent)]">
             <div className="flex gap-8 w-max animate-[marquee_28s_linear_infinite]">
-              {[...["LTspice","MATLAB","Multisim","Vivado","ISE Suite","TinkerCad","Basys3","LM741","TIP31","ZXT458","ESP32","React Native"], ...["LTspice","MATLAB","Multisim","Vivado","ISE Suite","TinkerCad","Basys3","LM741","TIP31","ZXT458","ESP32","React Native"]].map((t, i) => (
+              {[...["Python","PyTorch","FastAPI","React","TypeScript","ESP-IDF","React Native","Expo","SQLite","NumPy","SciPy","scikit-learn"], ...["Python","PyTorch","FastAPI","React","TypeScript","ESP-IDF","React Native","Expo","SQLite","NumPy","SciPy","scikit-learn"]].map((t, i) => (
                 <span key={i} className="font-mono2 text-[11px] tracking-[0.12em] uppercase text-[#a8bab0] whitespace-nowrap flex items-center gap-8">
                   {t} <span className="text-[#3eff7b]/40">·</span>
                 </span>

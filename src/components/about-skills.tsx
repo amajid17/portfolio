@@ -41,9 +41,9 @@ export function About() {
             {/* focus areas */}
             <div className="mt-7 grid sm:grid-cols-3 gap-3">
               {[
-                ["Analog focus", "Op-amps · BJT · regulation"],
-                ["Embedded + DSP", "VHDL · FIR · ESP32"],
-                ["Shipped software", "React Native · PWA"],
+                ["Wireless systems", "Wi-Fi CSI · 802.11bf · SenseGuard"],
+                ["Embedded systems", "ESP-IDF · ESP32 · React Native"],
+                ["Shipped software", "Android · PWA · SQLite"],
               ].map(([t, d]) => (
                 <div key={t} className="rounded-[10px] border border-white/[0.07] bg-white/[0.02] p-4">
                   <p className="font-mono2 text-[10px] tracking-[0.14em] uppercase text-[#3eff7b] mb-1">{t}</p>
@@ -70,7 +70,7 @@ export function About() {
               <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between">
                 <div>
                   <p className="font-display font-bold text-white text-lg leading-tight">{PROFILE.first} {PROFILE.last}</p>
-                  <p className="font-mono2 text-[11px] text-[#a8bab0]">EE · Analog / Embedded</p>
+                  <p className="font-mono2 text-[11px] text-[#a8bab0]">EE · Wireless / Software</p>
                 </div>
                 <span className="w-10 h-10 rounded-full bg-[#3eff7b] grid place-items-center text-black"><CircleCheck size={18} /></span>
               </div>
@@ -94,7 +94,7 @@ export function Skills() {
         <SectionHeading
           num="02 · SKILLS & TOOLS"
           title="What I reach for on the bench."
-          blurb="Ordered by fluency. Highlighted = I can defend it in an interview with a schematic or a scope capture."
+          blurb="Ordered by fluency. Highlighted means I've used it on a real project, not just read about it."
           right={<span className="font-mono2 text-[10px] tracking-[0.12em] uppercase text-[#7c9086] hidden md:block">●○○○○ = exposure → ●●●●● = fluent</span>}
         />
         <div className="grid sm:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -130,9 +130,9 @@ export function Skills() {
         <Reveal delay={0.2} className="mt-6 rounded-[14px] border border-[rgba(62,255,123,0.2)] bg-[linear-gradient(135deg,rgba(62,255,123,0.08),transparent_60%)] p-6 md:p-7 flex flex-col md:flex-row md:items-center gap-4">
           <div className="flex-1">
             <p className="font-mono2 text-[10px] tracking-[0.16em] uppercase text-[#3eff7b] mb-1.5">How I work</p>
-            <p className="text-[14px] text-[#c8d8ce] leading-relaxed max-w-[70ch]">Hand calc first, simulate second, measure third. Write down where they disagree. Every lab below lists what was <em className="text-white not-italic font-medium">specified, simulated and measured</em>, not just what was built.</p>
+            <p className="text-[14px] text-[#c8d8ce] leading-relaxed max-w-[70ch]">I work through the theory first, simulate to check it, then build and measure. Writing down where the simulation disagrees with reality is usually where the actual learning is.</p>
           </div>
-          <a href="#projects" className="shrink-0 inline-flex items-center gap-2 font-mono2 text-[11px] tracking-[0.1em] uppercase font-semibold bg-[#3eff7b] text-black rounded-[8px] px-5 py-3 hover:bg-white transition-colors">See proof below <ArrowUpRight size={14} /></a>
+          <a href="#projects" className="shrink-0 inline-flex items-center gap-2 font-mono2 text-[11px] tracking-[0.1em] uppercase font-semibold bg-[#3eff7b] text-black rounded-[8px] px-5 py-3 hover:bg-white transition-colors">See my projects <ArrowUpRight size={14} /></a>
         </Reveal>
       </div>
     </section>
