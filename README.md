@@ -1,4 +1,4 @@
-# EE Portfolio — React + Vite + Tailwind CSS 4
+# EE Portfolio
 
 A portfolio template built for electrical engineering students. Covers analog circuits, embedded systems, DSP lab work, personal software projects, and a senior design capstone section. All content lives in a single `data.ts` file — no component editing required to make it yours.
 
