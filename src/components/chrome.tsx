@@ -175,7 +175,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
           <div>
             <p className="font-display font-bold text-lg tracking-tight">a.majid<span className="text-[#3eff7b]">.</span>ee</p>
-            <p className="font-mono2 text-[11px] text-[#7c9086] tracking-[0.08em] mt-1">BUILT ON THE BENCH · MEASURED, NOT SIMULATED ONLY</p>
+            <p className="font-mono2 text-[11px] text-[#7c9086] tracking-[0.08em] mt-1">EE · CCNY · CLASS OF 2027</p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
             <button type="button" onClick={copy} className="inline-flex items-center gap-2 font-mono2 text-[11px] tracking-[0.08em] border border-white/10 rounded-md px-3.5 py-2.5 text-[#a8bab0] hover:text-[#3eff7b] hover:border-[rgba(62,255,123,0.4)] transition-colors">
