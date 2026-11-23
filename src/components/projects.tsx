@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpRight, BadgeCheck, FlaskConical, Cpu, Zap, Waves } from "lucide-react";
-import { LABS, PERSONAL } from "../data";
+import { LABS, PERSONAL, type PersonalProject } from "../data";
 import { Reveal, SectionHeading } from "./chrome";
 
 const FILTERS = ["All", "Analog", "Power", "Digital", "DSP"] as const;
@@ -91,7 +91,7 @@ export function EELabs() {
         <SectionHeading
           num="03 · PROJECTS"
           title="Engineering, with receipts."
-          blurb="Seven lab projects from circuits coursework. Each card shows the spec, simulation, and measurement result."
+          blurb="Seven lab projects from my circuits and DSP coursework, the foundation under the wireless and software work further down. Each card shows the spec, the simulation, and what the bench measurement actually gave."
           right={
             <div className="flex gap-1.5 bg-white/[0.04] border border-white/10 rounded-full p-1">
               {FILTERS.map((x) => (
@@ -178,7 +178,7 @@ export function PersonalProjects() {
       </Reveal>
 
       <div className="space-y-4">
-        {PERSONAL.map((p, i) => (
+        {PERSONAL.map((p: PersonalProject, i) => (
           <div key={p.name}>
           <Reveal delay={i * 0.06} className="rounded-[16px] border border-white/[0.08] bg-[#0b1210] overflow-hidden hover:border-[rgba(62,255,123,0.25)] transition-colors card-ring">
             <div className="grid lg:grid-cols-[1fr_1fr]">
