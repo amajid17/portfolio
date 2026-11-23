@@ -16,7 +16,7 @@ export function About() {
         <SectionHeading
           num="01 · ABOUT"
           title="Engineer first, builder always."
-          blurb="Fourth-year EE at CCNY, working across analog circuits, embedded systems, and signal processing. The part I find most useful is writing down where the simulation disagrees with the bench — not just when they match."
+          blurb="Fourth-year EE at CCNY, working across analog circuits, embedded systems, and signal processing. The part I find most useful is writing down where the simulation disagrees with the bench. Not just when they match."
 
         />
 
@@ -33,7 +33,7 @@ export function About() {
 
             <div className="space-y-4 text-[15px] leading-[1.8] text-[#a8bab0]">
               <p>I’m a fourth-year Electrical Engineering student at CCNY, interested in electronics, wireless systems, signal processing, and software development.</p>
-              <p>I enjoy the hands-on side of engineering — working through circuit calculations and LTspice simulations, breadboard testing, and figuring out why real measurements don’t always match theory.</p>
+              <p>I enjoy the hands-on side of engineering: working through circuit calculations and LTspice simulations, breadboard testing, and figuring out why real measurements don’t always match theory.</p>
               <p>I’m currently developing <span className="text-white">SenseGuard</span>, my senior design project, which explores cooperative Wi-Fi sensing using a 1TX/4RX architecture and Channel State Information (CSI). It aims to detect, diagnose, and recover from measurement faults in CSI while verifying sensing performance.</p>
               <p>I’ve also shipped four applications: an Android Quran reader, two installable PWAs, and an Android time clock built for my workplace to replace manual timekeeping.</p>
             </div>
@@ -52,9 +52,10 @@ export function About() {
               ))}
             </div>
 
-            <div className="mt-7 pt-6 border-t border-white/[0.07] grid sm:grid-cols-3 gap-4 font-mono2 text-[12px]">
+            <div className="mt-7 pt-6 border-t border-white/[0.07] grid sm:grid-cols-2 lg:grid-cols-4 gap-4 font-mono2 text-[12px]">
               <div><p className="text-[10px] tracking-[0.14em] uppercase text-[#7c9086] mb-1">Location</p><p className="text-[#c8d8ce] flex items-center gap-1.5"><MapPin size={13} className="text-[#3eff7b]" /> Jamaica, NY</p></div>
               <div><p className="text-[10px] tracking-[0.14em] uppercase text-[#7c9086] mb-1">Email</p><a href={`mailto:${PROFILE.email}`} className="text-[#3eff7b] hover:underline flex items-center gap-1.5"><Mail size={13} /> {PROFILE.email}</a></div>
+              <div><p className="text-[10px] tracking-[0.14em] uppercase text-[#7c9086] mb-1">Member</p><p className="text-[#c8d8ce] flex items-center gap-1.5"><span className="text-[#3eff7b] font-bold text-[11px]">IEEE</span> {PROFILE.ieee}</p></div>
               <div><p className="text-[10px] tracking-[0.14em] uppercase text-[#7c9086] mb-1">Why EE</p><p className="text-[#c8d8ce]">Been taking things apart since elementary school — flashlight fans, styrofoam boats, any toy that lasted two days before I opened it.</p></div>
             </div>
           </Reveal>
@@ -76,7 +77,7 @@ export function About() {
               </div>
             </div>
             <div className="p-5">
-              <a href="/resume.pdf" className="flex items-center justify-center gap-2 w-full bg-white/[0.06] hover:bg-[#3eff7b] hover:text-black border border-white/10 hover:border-[#3eff7b] text-white font-mono2 text-[11px] tracking-[0.1em] uppercase font-semibold rounded-[8px] py-3.5 transition-colors">
+              <a href="resume.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 w-full bg-white/[0.06] hover:bg-[#3eff7b] hover:text-black border border-white/10 hover:border-[#3eff7b] text-white font-mono2 text-[11px] tracking-[0.1em] uppercase font-semibold rounded-[8px] py-3.5 transition-colors">
                 <FileDown size={14} /> Download Résumé (PDF)
               </a>
             </div>
