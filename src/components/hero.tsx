@@ -162,7 +162,7 @@ export function Hero() {
           </motion.div>
 
           <motion.p initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.28 }} className="mt-4 max-w-[52ch] text-[15px] leading-[1.75] text-[#a8bab0]">
-            Fourth-year EE at <span className="text-white font-medium">CCNY</span>, focused on analog and embedded. Hand calc, simulate, build, measure. I also ship software I actually use: works without a server, built for real constraints.
+            Fourth-year EE at <span className="text-white font-medium">CCNY</span>, interested in wireless systems, signal processing, and software. I build offline-first apps and Wi-Fi sensing systems, and I like figuring out why real measurements don't always match the simulation.
           </motion.p>
 
           <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.34 }} className="mt-8 flex flex-wrap gap-3">
@@ -179,6 +179,7 @@ export function Hero() {
 
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.45 }} className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3 text-[13px] text-[#7c9086]">
             <span className="inline-flex items-center gap-1.5"><GraduationCap size={15} className="text-[#3eff7b]" /> B.E. EE · CCNY · ’27</span>
+            <span className="inline-flex items-center gap-1.5"><span className="text-[#3eff7b] font-bold font-mono2 text-[11px]">IEEE</span> {PROFILE.ieee}</span>
             <span className="inline-flex items-center gap-1.5"><MapPin size={14} className="text-[#3eff7b]" /> {PROFILE.location}</span>
             <span className="inline-flex items-center gap-3 ml-1">
               <a href={PROFILE.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="w-8 h-8 grid place-items-center rounded-md border border-white/10 text-[#a8bab0] hover:text-[#3eff7b] hover:border-[rgba(62,255,123,0.4)] transition-colors"><GithubIcon size={15} /></a>
@@ -212,8 +213,8 @@ export function Hero() {
           <div className="mt-4 grid grid-cols-3 gap-px bg-[rgba(62,255,123,0.12)] border border-[rgba(62,255,123,0.12)] rounded-[12px] overflow-hidden">
             {[
               ["4", "apps shipped & live"],
-              ["1TX · 4RX", "SenseGuard nodes"],
-              ["2350", "test assertions"],
+              ["3–5", "wireless nodes in senior design"],
+              ["2,350", "automated tests in PunchLedger"],
             ].map(([v, l]) => (
               <div key={l} className="bg-[#0b1210] px-4 py-4 text-center">
                 <p className="font-display font-bold text-[22px] text-white leading-none">{v}</p>
